@@ -23,14 +23,16 @@ void dictionaryAttack(char *hash) {
   // On compte le nombre de fichiers de hash
   DIR *dirp;
   struct dirent *entry;
-  char *files[DICT_NUMBER];
+  char *files[DICT_NUMBER] = { NULL };
 
   dirp = opendir("./wordlists");
-  for (int i = 0; (entry = readdir(dirp)) != NULL; i++) {
+  int i = 0;
+  while ((entry = readdir(dirp)) != NULL && i < DICT_NUMBER) {
     if (entry->d_type == DT_REG) {
       char filename[1024] = {0};
       sprintf(filename, "./wordlists/%s", entry->d_name);
-      files[i] = filename;
+      files[i] = strdup(filename); // Alloue dynamiquement la mémoire nécessaire pour copier le nom du fichier trouvé
+      i++;
     }
   }
 
@@ -39,7 +41,7 @@ void dictionaryAttack(char *hash) {
   // On fait un fork par fichier
   int id;
   FILE *f;
-  for (int i = 0; i < DICT_NUMBER; i++) {
+  for (i = 0; i < DICT_NUMBER; i++) {
     id = fork();
     
     // Le fils ouvre le fichier
@@ -54,19 +56,23 @@ void dictionaryAttack(char *hash) {
   
   // Le fils lit le fichier ligne par lignes
   if (!id) {
-    char *line = NULL;
-    size_t len = 0, read;
-
+    char line = [1024];
     char *pass, *passHash;
-    while ((read = getline(&line, &len, f)) != -1) {
+    
+    while (fgets(line, sizeof(line), f)) != NULL) {
       // Format de la ligne : mdp:hash
       // On split donc sur le :
-      pass = strtok(line, ":"); // mdp
-      passHash = strtok(NULL, ":"); // son hash
-      passHash[strlen(passHash)-1] = '\0'; // on enlève le \n de la fin
+      pass = line; // mdp
+      passHash = strchr(line, ':'); // son hash
+      if (passHash == NULL)
+          continue;
+      
+      *passHash = '\0';
+      passHash++;
+      passHash[strcspn(passHash, "\n")] = '\0'; // on enlève le \n de la fin
 
-      printf("Comparaison entre %s et %s : %d\n", hash, passHash, strcmp(hash, passHash));
-      if (strcmp(hash, passHash) == 0) {
+      printf("Comparaison entre %s et %s : %d\n", hash, passHash, memcmp(hash, passHash, strlen(hash)));
+      if (memcmp(hash, passHash, strlen(hash)) == 0) {
         puts("----");
         printf("MDP trouvé : %s\n", pass);
         puts("----");
