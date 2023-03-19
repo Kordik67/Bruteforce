@@ -92,39 +92,45 @@ void dictionaryAttack(char *hash) {
 void md5Force(int startIndex, int nb_proc, unsigned char hash[]) {
   char pass[32] = {0};
   int passLen = 0;
+  unsigned long long i;
 
-  for(unsigned long long i = startIndex;; i+=nb_proc) {
-    int j = 0;
-    unsigned long long powRes = 1;
+  // Initialize the start index for the current process
+  for (i = startIndex; i % 1024 != 0; ++i) {}
+
+  while (1) {
+    // Generate the next 1024 passwords
+    for (unsigned long long j = i; j < i + 1024 * nb_proc; j += nb_proc) {
+      int k = 0;
+      unsigned long long powRes = 1;
     
-    while (i >= powRes * CCLEN) {
-      ++passLen;
-      powRes *= CCLEN;
+      while (i >= powRes * CCLEN) {
+        ++passLen;
+        powRes *= CCLEN;
+      }
+
+      for (k = 0; k <= passLen; ++k) {
+        pass[k] = CC[(j / powRes) % CCLEN];
+        powRes /= CCLEN;
+      }
+
+      printf("%s\n", pass);
+
+      // Check if the generated password matches the hash
+      unsigned char res[MD5_DIGEST_LENGTH];
+      MD5(pass, strlen(pass), res);
+
+      if (!memcmp(hash, res, sizeof(hash))) {
+        puts("----");
+        printf("MDP trouvé : %s\n", pass);
+        puts("----");
+
+        killFork();
+
+        return;
+      }
     }
 
-    /*do {
-      pass[j] = CC[((int) (i / pow(CCLEN,j))) % CCLEN];
-      ++j;
-    } while (j <= log(i) / log(CCLEN));*/
-    for (j = 0; j <= passLen; ++j) {
-      pass[j] = CC[(i / powRes) % CCLEN];
-      powRes /= CCLEN;
-    }
-
-    printf("%s\n", pass);
-    //pause();
-
-    unsigned char res[MD5_DIGEST_LENGTH];
-    MD5(pass, strlen(pass), res);
-
-    if (!memcmp(hash, res, sizeof(hash))) {
-      puts("----");
-      printf("MDP trouvé : %s\n", pass);
-      puts("----");
-
-      killFork();
-
-      return;
-    }
+    // Increment the start index for the next 1024 passwords
+    i += 1024 * nb_proc;
   }
 }
