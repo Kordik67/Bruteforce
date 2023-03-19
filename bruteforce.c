@@ -56,10 +56,10 @@ void dictionaryAttack(char *hash) {
   
   // Le fils lit le fichier ligne par lignes
   if (!id) {
-    char line = [1024]; // Allocation de mémoire de façon statique
+    char line[1024]; // Allocation de mémoire de façon statique
     char *pass, *passHash;
     
-    while (fgets(line, sizeof(line), f)) != NULL) {
+    while (fgets(line, sizeof(line), f) != NULL) {
       // Format de la ligne : mdp:hash
       // On split donc sur le :
       pass = line; // mdp
