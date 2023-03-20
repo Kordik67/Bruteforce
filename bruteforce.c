@@ -130,7 +130,7 @@ void md5Force(int startIndex, int nb_proc, unsigned char hash[]) {
       }
 
       for (k = 0; k <= passLen; ++k) {
-        pass[k] = CC[(j / powRes) % CCLEN];x²
+        pass[k] = CC[(j / powRes) % CCLEN];
         powRes /= CCLEN;
       }
 
