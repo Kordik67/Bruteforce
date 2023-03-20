@@ -12,7 +12,7 @@
 #include <openssl/md5.h>
 #include <dirent.h>
 
-#define CC                       "abcdefghijklmnopqrstuvwxyzABCDEFGHIJKLMNOPQRSTUVWXYZ1203495687.!-@*_$#/,+%&?;=~^)[\\]`(<'>|\"" // J'ai enlevé le :
+#define CC                       "abcdefghijklmnopqrstuvwxyzABCDEFGHIJKLMNOPQRSTUVWXYZ0123456789.!-@*_$#/,+%&?;=~^)[\\]`(<'>|\"" // J'ai enlevé le :
 #define CCLEN                    91 // 92 si on met :
 #define CPR(str1, str2)          !strcmp((str1), (str2))
 #define DICT_NUMBER              1

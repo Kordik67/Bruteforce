@@ -88,6 +88,27 @@ void dictionaryAttack(char *hash) {
   }
 }
 
+unsigned long long intpow(unsigned long long a, unsigned long long b) {
+  return b ? a * intpow(a, b-1) : 0;
+}
+
+unsigned long long sumpow(unsigned long long a, unsigned long long b) {
+  unsigned long long r = 0;
+
+  for (int i = 1; i < n; i++)
+    r += intpow(a, i);
+
+  return r;
+}
+
+int nbchar(unsigned long long i) {
+  int nb = 1;
+  while (i > sumpow(CCLEN, nb+1))
+    ++nb;
+
+  return nb;
+}
+
 // TODO : Peut-être utiliser des threads à la place des fork
 void md5Force(int startIndex, int nb_proc, unsigned char hash[]) {
   char pass[32] = {0};
@@ -109,7 +130,7 @@ void md5Force(int startIndex, int nb_proc, unsigned char hash[]) {
       }
 
       for (k = 0; k <= passLen; ++k) {
-        pass[k] = CC[(j / powRes) % CCLEN];
+        pass[k] = CC[(j / powRes) % CCLEN];x²
         powRes /= CCLEN;
       }
 
@@ -117,9 +138,9 @@ void md5Force(int startIndex, int nb_proc, unsigned char hash[]) {
 
       // Check if the generated password matches the hash
       unsigned char res[MD5_DIGEST_LENGTH];
-      MD5(pass, strlen(pass), res);
+      MD5((const unsigned char *) pass, strlen(pass), res);
 
-      if (!memcmp(hash, res, sizeof(hash))) {
+      if (!memcmp(hash, res, MD5_DIGEST_LENGTH)) {
         puts("----");
         printf("MDP trouvé : %s\n", pass);
         puts("----");
