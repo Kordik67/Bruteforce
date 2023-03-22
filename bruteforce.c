@@ -158,14 +158,14 @@ void md5Force(int startIndex, int nb_proc, unsigned char hash[]) {
 
 void genPassword(unsigned long long start,unsigned long long end,const unsigned char hash2find[MD5_DIGEST_LENGTH]){
     int nb_caracter = nb_char(start);
-    unsigned long long borne_inf = sum_pow(CCLEN,nb_caracter); // BORNE MINI DE l'INTERVAL
-    unsigned long long borne_sup = sum_pow(CCLEN,nb_caracter+1)-1; // BORNE MAXI DE l'INTERVAL
+    unsigned long long borne_inf = sumpow(CCLEN,nb_caracter); // BORNE MINI DE l'INTERVAL
+    unsigned long long borne_sup = sumpow(CCLEN,nb_caracter+1)-1; // BORNE MAXI DE l'INTERVAL
     char pass[MAX_PASSWORD_LEN] = {0};
     for(unsigned long long i = start; i < end; i++){
         if(i > borne_sup){
             nb_caracter++;
-            borne_inf = sum_pow(CCLEN,nb_caracter);
-            borne_sup = sum_pow(CCLEN,nb_caracter+1)-1;
+            borne_inf = sumpow(CCLEN,nb_caracter);
+            borne_sup = sumpow(CCLEN,nb_caracter+1)-1;
         }
         for(int c = 0 ; c < nb_caracter;c++){
             pass[c] = CC[ ( (i-borne_inf)/intpow(CCLEN,c) ) % CCLEN ]; 
@@ -177,7 +177,7 @@ void genPassword(unsigned long long start,unsigned long long end,const unsigned 
 
         unsigned char res[MD5_DIGEST_LENGTH];
         MD5((const unsigned char *) pass, nb_caracter, res);
-        if(same_hash(res,hash2find)){
+        if(memcmp(res, hash2find, MD5_DIGEST_LENGTH)){
             printf("!!!\nPASSWORD FOUND : '%s'\n!!!\n",pass);
             return;
         }
