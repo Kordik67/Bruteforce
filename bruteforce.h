@@ -31,4 +31,10 @@ void dictionaryAttack(char *hash);
 // Fonction qui tue tous les fork
 void killFork();
 
+// Test
+unsigned long long intpow(unsigned long long a, unsigned long long b);
+unsigned long long sumpow(unsigned long long a,unsigned long long n);
+int nbchar(unsigned long long i);
+void genPassword(unsigned long long start,unsigned long long end,const unsigned char hash2find[MD5_DIGEST_LENGTH]);
+
 #endif // BRUTEFORCE_H

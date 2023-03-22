@@ -89,7 +89,7 @@ void dictionaryAttack(char *hash) {
 }
 
 unsigned long long intpow(unsigned long long a, unsigned long long b) {
-  return b ? a * intpow(a, b-1) : 0;
+  return b ? a * intpow(a, b-1) : 1;
 }
 
 unsigned long long sumpow(unsigned long long a, unsigned long long b) {
@@ -111,47 +111,33 @@ int nbchar(unsigned long long i) {
 
 // TODO : Peut-être utiliser des threads à la place des fork
 void md5Force(int startIndex, int nb_proc, unsigned char hash[]) {
-  char pass[32] = {0};
-  int passLen = 0;
-  unsigned long long i;
-
-  // Initialize the start index for the current process
-  for (i = startIndex; i % 1024 != 0; ++i) {}
-
-  while (1) {
-    // Generate the next 1024 passwords
-    for (unsigned long long j = i; j < i + 1024 * nb_proc; j += nb_proc) {
-      int k = 0;
-      unsigned long long powRes = 1;
-    
-      while (i >= powRes * CCLEN) {
-        ++passLen;
-        powRes *= CCLEN;
-      }
-
-      for (k = 0; k <= passLen; ++k) {
-        pass[k] = CC[(j / powRes) % CCLEN];
-        powRes /= CCLEN;
-      }
-
-      printf("%s\n", pass);
-
-      // Check if the generated password matches the hash
-      unsigned char res[MD5_DIGEST_LENGTH];
-      MD5((const unsigned char *) pass, strlen(pass), res);
-
-      if (!memcmp(hash, res, MD5_DIGEST_LENGTH)) {
-        puts("----");
-        printf("MDP trouvé : %s\n", pass);
-        puts("----");
-
-        killFork();
-
-        return;
-      }
+  int nb_char = nbchar(start);
+  unsigned long long borne_inf = sum_pow(CCLEN,nb_caracter); // BORNE MINI DE l'INTERVAL
+  unsigned long long borne_sup = sum_pow(CCLEN,nb_caracter+1)-1; // BORNE MAXI DE l'INTERVAL
+  char pass[MAX_PASSWORD_LEN] = {0};
+  
+  for(unsigned long long i = start; i < end; i++){
+    if(i > borne_sup){
+      nb_caracter++;
+      borne_inf = sum_pow(CCLEN,nb_caracter);
+      borne_sup = sum_pow(CCLEN,nb_caracter+1)-1;
     }
+    
+    for(int c = 0 ; c < nb_caracter;c++){
+      pass[c] = CC[ ( (i-borne_inf)/intpow(CCLEN,c) ) % CCLEN ]; 
+    }
+    
+    printf("[%d ; %d] \n",borne_inf,borne_sup);
+    printf("nb_car=%d \n",nb_caracter);
+    printf("index du mot = %d --> '%s'\n",i,pass);
+    printf("-------\n");
 
-    // Increment the start index for the next 1024 passwords
-    i += 1024 * nb_proc;
+    unsigned char res[MD5_DIGEST_LENGTH];
+    MD5((const unsigned char *) pass, nb_caracter, res);
+    
+    if(memcmp(res,hash2find, MD5_DIGEST_LENGTH)){
+      printf("!!!\nPASSWORD FOUND : '%s'\n!!!\n",pass);
+      return;
+    }
   }
 }

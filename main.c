@@ -47,7 +47,7 @@ int main(int argc, char **argv) {
     return 0;
   }
 
-  for (int f = 0; f < fn; ++f) {
+  /*for (int f = 0; f < fn; ++f) {
     id = fork();
 
     if (!id) {
@@ -63,10 +63,11 @@ int main(int argc, char **argv) {
       continue;
     }
     startIndex += pow(2, f);
-  }
+  }*/
 
   if (CPR(hashType, "$1$"))
-    md5Force(startIndex, nb_proc, hash);
+    genPassword(0, -1, hash);
+    //md5Force(startIndex, nb_proc, hash);
   /*else if (CPR(hashType, "$2$"))
     blowFishForce();
   else if (CPR(hashType, "$2a$"))
