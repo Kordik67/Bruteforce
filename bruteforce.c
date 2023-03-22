@@ -92,7 +92,7 @@ unsigned long long intpow(unsigned long long a, unsigned long long b) {
   return b ? a * intpow(a, b-1) : 1;
 }
 
-unsigned long long sumpow(unsigned long long a, unsigned long long b) {
+unsigned long long sumpow(unsigned long long a, unsigned long long n) {
   unsigned long long r = 0;
 
   for (int i = 1; i < n; i++)
