@@ -157,7 +157,7 @@ void md5Force(int startIndex, int nb_proc, unsigned char hash[]) {
 }
 
 void genPassword(unsigned long long start,unsigned long long end,const unsigned char hash2find[MD5_DIGEST_LENGTH]){
-    int nb_caracter = nb_char(start);
+    int nb_caracter = nbchar(start);
     unsigned long long borne_inf = sumpow(CCLEN,nb_caracter); // BORNE MINI DE l'INTERVAL
     unsigned long long borne_sup = sumpow(CCLEN,nb_caracter+1)-1; // BORNE MAXI DE l'INTERVAL
     char pass[MAX_PASSWORD_LEN] = {0};
