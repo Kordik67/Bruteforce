@@ -17,6 +17,7 @@
 #define CPR(str1, str2)          !strcmp((str1), (str2))
 #define DICT_NUMBER              1
 #define FIFO_NAME                "/tmp/killfifo"
+#define MAX_PASSWORD_LEN         64
 
 // Fonctions de bruteforce
 void md5Force(int startIndex, int nb_proc, unsigned char hash[]);
