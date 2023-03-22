@@ -177,7 +177,8 @@ void genPassword(unsigned long long start,unsigned long long end,const unsigned 
 
         unsigned char res[MD5_DIGEST_LENGTH];
         MD5((const unsigned char *) pass, nb_caracter, res);
-        if(memcmp(res, hash2find, MD5_DIGEST_LENGTH)){
+        
+        if(memcmp(res, hash2find, MD5_DIGEST_LENGTH) == 0){
             printf("!!!\nPASSWORD FOUND : '%s'\n!!!\n",pass);
             return;
         }
