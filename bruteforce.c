@@ -110,7 +110,7 @@ int nbchar(unsigned long long i) {
 }
 
 // TODO : Peut-être utiliser des threads à la place des fork
-void md5Force(int startIndex, int nb_proc, unsigned char hash[]) {
+void md5Force(unsigned long long start, unsigned long long end, const unsigned char hash2find[MD5_DIGEST_LENGTH]) {
   int nb_char = nbchar(start);
   unsigned long long borne_inf = sum_pow(CCLEN,nb_caracter); // BORNE MINI DE l'INTERVAL
   unsigned long long borne_sup = sum_pow(CCLEN,nb_caracter+1)-1; // BORNE MAXI DE l'INTERVAL
